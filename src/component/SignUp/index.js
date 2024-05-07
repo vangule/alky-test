@@ -17,7 +17,12 @@ const SignUp = () => {
       <div>
         <img src={AlkyLogo} alt='alky logo' width="100px" height="100px" /> 
       </div>
-      <Step stepper={stepper} setStepper={setStepper} />
+
+      <Step
+        stepper={stepper}
+        setStepper={setStepper}
+      />
+
       {stepper?.level === 2 ? <Desc>
         Dingoo will use your data to personalise and improve your Dingoo experience and 
         to send you information about Dingoo. You can change your communication preferences 

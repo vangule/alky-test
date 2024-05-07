@@ -3,13 +3,38 @@ import { Heading, SubHeading, BottomSection, CTA, InputBar, RightSection, LeftSe
 import EyeOffIcon from '../../assests/eye-off.png';
 import EyeOnIcon from '../../assests/eye-on.png';
 import { NavLink } from 'react-router-dom';
+import { extractUsername } from '../utils';
 
 const Step = ({ stepper = {}, setStepper = () => {} }) => {
     const { level = '', heading = '', innerHeading = '', subHeading, innerSubHeading } = stepper || {};
 
     const [isEyeOn, setIsEyeOn] = useState(false);
+    const [loginData, setLoginData] = useState({
+      email: '',
+      password: ''
+    });
 
     const checkPass = isEyeOn ? 'text' : 'password';
+    const type = level === 2 ? 'password' : 'email';
+
+  const username = extractUsername(loginData?.email);
+
+    const handleChange = (e) => {
+      setLoginData({ ...loginData, [type]:  e.target.value })
+    };
+
+    const handleNext = () => {
+      if(!loginData?.email){
+        return;
+      }
+      setStepper({ 
+        level : 2,
+        heading: 'Create an account to', 
+        innerHeading : 'continue',
+        subHeading : 'You’ll be able to log in to Dingoo with this',
+        innerSubHeading : 'email address and password.'
+    })
+    }
 
   return (
       <BottomSection>
@@ -22,24 +47,31 @@ const Step = ({ stepper = {}, setStepper = () => {} }) => {
         </RightSection>
         <LeftSection>
           {level === 2 && <Note>Enter a password to create your account with</Note>}
+
           <div style={{ display:'flex', flexDirection:'column' }}>
             <div style={{ position:'relative'}}>
-              <InputBar type={level === 2 ? checkPass : 'email' } placeholder={level === 2 ? 'Choose a password' : 'Email'} />
-              {level === 2 && <img src={isEyeOn ? EyeOnIcon : EyeOffIcon} alt='eye_icon' width="30px" height="30px" style={{ position:'absolute', right: '10px', top: '10px', cursor:'pointer'}} onClick={() => setIsEyeOn(!isEyeOn)} />}
+              <InputBar
+                type={level === 2 ? checkPass : 'email' }
+                placeholder={level === 2 ? 'Choose a password' : 'Email'}
+                onChange={handleChange}
+              />
+              {level === 2 && 
+                <img 
+                  src={isEyeOn ? EyeOnIcon : EyeOffIcon}
+                  alt='eye_icon'
+                  width="30px"
+                  height="30px"
+                  style={{ position:'absolute', right: '10px', top: '10px', cursor:'pointer'}}
+                  onClick={() => setIsEyeOn(!isEyeOn)}
+                />}
             </div>
+
             <div style={{ display:'flex', flex: 1, justifyContent:'flex-end', alignItems:"center"}}>
                 {level === 2 && <Note2>
                     Use a minimum of 6 characters (case sensitive) with at least one number or special character.
                 </Note2>}
-                <NavLink to={level === 2 ? '/dashboard' : '/'}>
-                  <CTA onClick={() => 
-                      setStepper({ 
-                          level : 2,
-                          heading: 'Create an account to', 
-                          innerHeading : 'continue',
-                          subHeading : 'You’ll be able to log in to Dingoo with this',
-                          innerSubHeading : 'email address and password.'
-                      })}>{level === 2 ? 'Agree &' : null } Continue</CTA>
+                <NavLink to={level === 2 ? `/dashboard?${username}` : '/'}>
+                  <CTA type="submit" onClick={handleNext}>{level === 2 ? 'Agree &' : null} Continue</CTA>
                 </NavLink>
             </div>
           </div>

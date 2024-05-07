@@ -12,6 +12,7 @@ export const Heading = styled.div`
 
     span {
         text-decoration: underline;
+        text-transform: capitalize;
     }
 `;
 
